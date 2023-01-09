@@ -50,33 +50,28 @@ void CRadar::DrawRadar()
 	if (!F::Menu.IsOpen && !Vars::Radar::Main::NoTitleGradient.Value)
 	{
 		g_Draw.GradientRect(RadarX - RadarSize, RadarY - RadarSize - 3,
-							RadarX - RadarSize + RadarSize, RadarY - RadarSize, { 43, 43, 45, 250 },
-							Vars::Menu::Colors::MenuAccent, true);
+			RadarX - RadarSize + RadarSize, RadarY - RadarSize, { 125, 52, 255, 255 },
+			Vars::Menu::Colors::MenuAccent, true);
 
 		g_Draw.GradientRect(RadarX - RadarSize + RadarSize, RadarY - RadarSize - 3,
-							RadarX - RadarSize + (RadarSize * 2), RadarY - RadarSize,
-							Vars::Menu::Colors::MenuAccent, { 43, 43, 45, 250 }, true);
+			RadarX - RadarSize + (RadarSize * 2), RadarY - RadarSize,
+			Vars::Menu::Colors::MenuAccent, { 43, 43, 45, 250 }, true);
 	}
 
 	//Build the bg color with the wanted alpha.
-	const Color_t clrBack = { 36, 36, 36, static_cast<byte>(Vars::Radar::Main::BackAlpha.Value) };
+	const Color_t clrBack = { 0, 9, 4, static_cast<byte>(Vars::Radar::Main::BackAlpha.Value) };
 
 
 	//Background
 	g_Draw.Rect(RadarX - RadarSize, RadarY - RadarSize, RadarSize * 2, RadarSize * 2, clrBack);
 
 	//Outline
-	g_Draw.OutlinedRect(RadarX - RadarSize, RadarY - RadarSize, RadarSize * 2, RadarSize * 2, {
-							43, 43, 45, static_cast<byte>(Vars::Radar::Main::LineAlpha.Value)
-						});
+	g_Draw.OutlinedRect(RadarX - RadarSize, RadarY - RadarSize, RadarSize * 2, RadarSize * 2, Vars::Menu::Colors::MenuAccent);
 
 	//Center lines
-	g_Draw.Line(RadarX, RadarY - RadarSize, RadarX, RadarY + RadarSize - 1, {
-					43, 43, 45, static_cast<byte>(Vars::Radar::Main::LineAlpha.Value)
-				});
-	g_Draw.Line(RadarX - RadarSize, RadarY, RadarX + RadarSize - 1, RadarY, {
-					43, 43, 45, static_cast<byte>(Vars::Radar::Main::LineAlpha.Value)
-				});
+	g_Draw.Line(RadarX, RadarY - RadarSize, RadarX, RadarY + RadarSize - 1, Vars::Menu::Colors::MenuAccent);
+
+	g_Draw.Line(RadarX - RadarSize, RadarY, RadarX + RadarSize - 1, RadarY, Vars::Menu::Colors::MenuAccent);
 }
 
 bool CRadar::GetDrawPosition(int& x, int& y, int& z, CBaseEntity* pEntity)
@@ -84,7 +79,7 @@ bool CRadar::GetDrawPosition(int& x, int& y, int& z, CBaseEntity* pEntity)
 	//Calculate the delta and initial position of the entity
 	const Vec3 vDelta = pEntity->GetAbsOrigin() - LocalOrigin;
 	auto vPos = Vec2((vDelta.y * (-LocalCos) + vDelta.x * LocalSin),
-					 (vDelta.x * (-LocalCos) - vDelta.y * LocalSin));
+		(vDelta.x * (-LocalCos) - vDelta.y * LocalSin));
 
 	//Range, keep in bounds
 	//Credits are due to whoever wrote this, does what I want and is fast so idc. Code probably older than Jesus.
@@ -171,8 +166,8 @@ void CRadar::DrawPoints(CBaseEntity* pLocal)
 	if (Vars::Radar::Buildings::Active.Value)
 	{
 		const auto& buildings = g_EntityCache.GetGroup(Vars::Radar::Buildings::IgnoreTeam.Value
-													   ? EGroupType::BUILDINGS_ENEMIES
-													   : EGroupType::BUILDINGS_ALL);
+			? EGroupType::BUILDINGS_ENEMIES
+			: EGroupType::BUILDINGS_ALL);
 
 		for (const auto& building : buildings)
 		{
@@ -190,47 +185,47 @@ void CRadar::DrawPoints(CBaseEntity* pLocal)
 
 					switch (pObject->GetClassID())
 					{
-						case ETFClassID::CObjectSentrygun:
+					case ETFClassID::CObjectSentrygun:
+					{
+						int nTexture = (pObject->GetLevel() + 40);
+
+						if (Vars::Radar::Buildings::Outline.Value)
 						{
-							int nTexture = (pObject->GetLevel() + 40);
-
-							if (Vars::Radar::Buildings::Outline.Value)
-							{
-								g_Draw.Texture(nX - 2, nY - 2, nSize + 4, nSize + 4, clrBlack, nTexture);
-							}
-
-							g_Draw.Texture(nX, nY, nSize, nSize, clrDraw, nTexture);
-							break;
+							g_Draw.Texture(nX - 2, nY - 2, nSize + 4, nSize + 4, clrBlack, nTexture);
 						}
-						case ETFClassID::CObjectDispenser:
+
+						g_Draw.Texture(nX, nY, nSize, nSize, clrDraw, nTexture);
+						break;
+					}
+					case ETFClassID::CObjectDispenser:
+					{
+						if (Vars::Radar::Buildings::Outline.Value)
 						{
-							if (Vars::Radar::Buildings::Outline.Value)
-							{
-								g_Draw.Texture(nX - 2, nY - 2, nSize + 4, nSize + 4, clrBlack, 44);
-							}
-
-							g_Draw.Texture(nX, nY, nSize, nSize, clrDraw, 44);
-							break;
+							g_Draw.Texture(nX - 2, nY - 2, nSize + 4, nSize + 4, clrBlack, 44);
 						}
-						case ETFClassID::CObjectTeleporter:
+
+						g_Draw.Texture(nX, nY, nSize, nSize, clrDraw, 44);
+						break;
+					}
+					case ETFClassID::CObjectTeleporter:
+					{
+						int nTexture = 46; //Exit texture ID
+
+						//If "YawToExit" is not zero, it most like is an entrance
+						if (pObject->GetYawToExit())
 						{
-							int nTexture = 46; //Exit texture ID
-
-							//If "YawToExit" is not zero, it most like is an entrance
-							if (pObject->GetYawToExit())
-							{
-								nTexture -= 1; //In that case, -1 from "nTexture" so we get entrace texture ID
-							}
-
-							if (Vars::Radar::Buildings::Outline.Value)
-							{
-								g_Draw.Texture(nX - 2, nY - 2, nSize + 4, nSize + 4, clrBlack, nTexture);
-							}
-
-							g_Draw.Texture(nX, nY, nSize, nSize, clrDraw, nTexture);
-							break;
+							nTexture -= 1; //In that case, -1 from "nTexture" so we get entrace texture ID
 						}
-						default: break;
+
+						if (Vars::Radar::Buildings::Outline.Value)
+						{
+							g_Draw.Texture(nX - 2, nY - 2, nSize + 4, nSize + 4, clrBlack, nTexture);
+						}
+
+						g_Draw.Texture(nX, nY, nSize, nSize, clrDraw, nTexture);
+						break;
+					}
+					default: break;
 					}
 
 					if (Vars::Radar::Buildings::Health.Value)
@@ -248,7 +243,7 @@ void CRadar::DrawPoints(CBaseEntity* pLocal)
 
 						g_Draw.Rect(((nX - nW) - 1), nY, nW, nSize, Colors::OutlineESP);
 						g_Draw.Rect(((nX - nW) - 1), (nY + nSize - (nSize * flRatio)), nW, (nSize * flRatio),
-									clrHealth);
+							clrHealth);
 					}
 				}
 			}
@@ -271,34 +266,34 @@ void CRadar::DrawPoints(CBaseEntity* pLocal)
 
 			switch (Vars::Radar::Players::IgnoreCloaked.Value)
 			{
-				case 0: { break; }
-				case 1:
-				{
-					if (player->IsCloaked()) { continue; }
-					break;
-				}
-				case 2:
-				{
-					if (player->IsCloaked() && nEntTeam != nLocalTeam) { continue; }
-					break;
-				}
+			case 0: { break; }
+			case 1:
+			{
+				if (player->IsCloaked()) { continue; }
+				break;
+			}
+			case 2:
+			{
+				if (player->IsCloaked() && nEntTeam != nLocalTeam) { continue; }
+				break;
+			}
 			}
 
 			const bool bIsFriend = g_EntityCache.IsFriend(player->GetIndex());
 
 			switch (Vars::Radar::Players::IgnoreTeam.Value)
 			{
-				case 0: { break; }
-				case 1:
-				{
-					if (nEntTeam == nLocalTeam) { continue; }
-					break;
-				}
-				case 2:
-				{
-					if (nEntTeam == nLocalTeam && !bIsFriend) { continue; }
-					break;
-				}
+			case 0: { break; }
+			case 1:
+			{
+				if (nEntTeam == nLocalTeam) { continue; }
+				break;
+			}
+			case 2:
+			{
+				if (nEntTeam == nLocalTeam && !bIsFriend) { continue; }
+				break;
+			}
 			}
 
 			int nX = -1, nY = -1, nZ = 0;
@@ -382,13 +377,13 @@ void CRadar::DrawPoints(CBaseEntity* pLocal)
 
 					g_Draw.Rect(((nX - nWidth) - 1), nY, nWidth, nSize, Colors::OutlineESP);
 					g_Draw.Rect(((nX - nWidth) - 1), (nY + nSize - (nSize * flRatio)), nWidth, (nSize * flRatio),
-								clrHealth);
+						clrHealth);
 
 					if (flOverHeal > 0.0f)
 					{
 						flRatio = (flOverHeal / flMaxHealth);
 						g_Draw.Rect(((nX - nWidth) - 1), (nY + (nSize + 1) - (nSize * flRatio)), nWidth,
-									(nSize * flRatio), Colors::Overheal);
+							(nSize * flRatio), Colors::Overheal);
 					}
 				}
 

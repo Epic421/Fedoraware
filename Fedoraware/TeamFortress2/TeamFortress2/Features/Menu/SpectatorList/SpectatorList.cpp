@@ -17,17 +17,17 @@ bool CSpectatorList::GetSpectators(CBaseEntity* pLocal)
 			std::wstring szMode;
 			switch (pTeammate->GetObserverMode())
 			{
-				case OBS_MODE_FIRSTPERSON:
-				{
-					szMode = L"1st";
-					break;
-				}
-				case OBS_MODE_THIRDPERSON:
-				{
-					szMode = L"3rd";
-					break;
-				}
-				default: continue;
+			case OBS_MODE_FIRSTPERSON:
+			{
+				szMode = L"1st";
+				break;
+			}
+			case OBS_MODE_THIRDPERSON:
+			{
+				szMode = L"3rd";
+				break;
+			}
+			default: continue;
 			}
 
 			PlayerInfo_t playerInfo{ };
@@ -36,7 +36,7 @@ bool CSpectatorList::GetSpectators(CBaseEntity* pLocal)
 				Spectators.push_back({
 					Utils::ConvertUtf8ToWide(playerInfo.name), szMode, g_EntityCache.IsFriend(pTeammate->GetIndex()),
 					pTeammate->GetTeamNum(), pTeammate->GetIndex()
-									 });
+					});
 			}
 		}
 	}
@@ -104,14 +104,16 @@ void CSpectatorList::DrawDefault()
 		0);
 
 	// 38 to 43
-	g_Draw.Rect(SpecListX, SpecListY, SpecListW, SpecListTitleBarH, { 43, 43, 45, 250 });
+	const Color_t clrBack = { 0, 9, 4, static_cast<byte>(Vars::Radar::Main::BackAlpha.Value) };
+	g_Draw.Rect(SpecListX, SpecListY, SpecListW, SpecListTitleBarH, clrBack);
+	g_Draw.OutlinedRect(SpecListX, SpecListY, SpecListW, SpecListTitleBarH, Vars::Menu::Colors::MenuAccent);
 
-	g_Draw.String(FONT_MENU,
-				  SpecListX + (SpecListW / 2),
-				  SpecListY + (SpecListTitleBarH / 2),
-				  Vars::Menu::Colors::MenuAccent,
-				  ALIGN_CENTER,
-				  "%hs", "Spectators");
+	g_Draw.String(FONT_INDICATORS,
+		SpecListX + (SpecListW / 2),
+		SpecListY + (SpecListTitleBarH / 2),
+		{ 255, 255, 255, 255 },
+		ALIGN_CENTER,
+		"%hs", "Spectators");
 
 	if (const auto& pLocal = g_EntityCache.GetLocal())
 	{
@@ -119,15 +121,16 @@ void CSpectatorList::DrawDefault()
 
 		constexpr int nSpacing = 5;
 		constexpr int nModeW = 15;
-		const int nFontTall = g_Draw.m_vecFonts[FONT_MENU].nTall;
+		const int nFontTall = g_Draw.m_vecFonts[FONT_INDICATORS].nTall;
 		const int nModeX = SpecListX + nSpacing;
 		const int nNameX = nModeX + nModeW + (nSpacing * 2);
 		int y = SpecListY + SpecListTitleBarH;
 		const int h = nFontTall * Spectators.size();
 
 		// 25 to 31
-		g_Draw.Rect(SpecListX, y, SpecListW, h, { 36, 36, 36, 255 });
-		g_Draw.Line(nModeX + nSpacing + nModeW, y, nModeX + nSpacing + nModeW, y + h - 1, { 255, 255, 255, 255 });
+		g_Draw.Rect(SpecListX, y, SpecListW, h, clrBack);
+		g_Draw.OutlinedRect(SpecListX, y, SpecListW, h, Vars::Menu::Colors::MenuAccent);
+		g_Draw.Line(nModeX + nSpacing + nModeW, y, nModeX + nSpacing + nModeW, y + h - 1, Vars::Menu::Colors::MenuAccent);
 
 		for (size_t n = 0; n < Spectators.size(); n++)
 		{
@@ -138,8 +141,8 @@ void CSpectatorList::DrawDefault()
 
 			y = SpecListY + SpecListTitleBarH + (nFontTall * n);
 
-			g_Draw.String(FONT_MENU, nModeX, y, { 255, 255, 255, 255 }, ALIGN_DEFAULT, Spectators[n].Mode.data());
-			g_Draw.String(FONT_MENU, nNameX, y, { 255, 255, 255, 255 }, ALIGN_DEFAULT, Spectators[n].Name.data());
+			g_Draw.String(FONT_INDICATORS, nModeX, y, { 255, 255, 255, 255 }, ALIGN_DEFAULT, Spectators[n].Mode.data());
+			g_Draw.String(FONT_INDICATORS, nNameX, y, { 255, 255, 255, 255 }, ALIGN_DEFAULT, Spectators[n].Name.data());
 		}
 	}
 }
@@ -167,7 +170,7 @@ void CSpectatorList::DrawClassic()
 
 			int w, h;
 			I::VGuiSurface->GetTextSize(g_Draw.m_vecFonts[FONT_ESP_NAME].dwFont,
-										(Spectator.Mode + Spectator.Name).c_str(), w, h);
+				(Spectator.Mode + Spectator.Name).c_str(), w, h);
 
 			const int nAddY = g_Draw.m_vecFonts[FONT_ESP_NAME].nTall;
 			if (Vars::Visuals::SpectatorList.Value == 3)

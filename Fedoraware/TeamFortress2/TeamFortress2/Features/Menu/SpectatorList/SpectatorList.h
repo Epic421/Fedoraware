@@ -14,10 +14,10 @@ private:
 	};
 
 	std::vector<Spectator_t> Spectators;
-	int SpecListW = 300, SpecListTitleBarH = 12;
+	int SpecListW = 200, SpecListTitleBarH = 15;
 
 public:
-	int SpecListX = 30, SpecListY = 100;
+	int SpecListX = 3, SpecListY = 450;
 	bool GetSpectators(CBaseEntity* pLocal);
 	bool ShouldRun();
 	void Run();

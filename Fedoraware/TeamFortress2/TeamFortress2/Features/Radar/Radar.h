@@ -16,7 +16,7 @@ public:
 	void Run();
 	void DrawWindow();
 
-	int RadarX = 100, RadarY = 500;
+	int RadarX = 3, RadarY = 600;
 };
 
 ADD_FEATURE(CRadar, Radar)
