@@ -70,7 +70,7 @@ void CVisuals::DrawOnScreenConditions(CBaseEntity* pLocal)
 	int width, height;
 	for (const std::wstring& cond : conditionsVec)
 	{
-		g_Draw.String(FONT_MENU, x, y + nTextOffset, { 255, 255, 255, 255 }, ALIGN_CENTER, cond.data());
+		g_Draw.String(FONT_INDICATORS, x, y + nTextOffset, { 255, 255, 255, 255 }, ALIGN_CENTER, cond.data());
 		I::VGuiSurface->GetTextSize(g_Draw.m_vecFonts[FONT_MENU].dwFont, cond.data(), width, height);
 		//if (width > longestText)
 		//{
@@ -84,7 +84,7 @@ void CVisuals::DrawOnScreenConditions(CBaseEntity* pLocal)
 	//ConditionH = y + nTextOffset;
 }
 
-void CVisuals::DrawOnScreenPing(CBaseEntity* pLocal){
+void CVisuals::DrawOnScreenPing(CBaseEntity* pLocal) {
 	if (!Vars::Visuals::DrawOnScreenPing.Value) { return; }
 	if (!pLocal->IsAlive() || pLocal->IsAGhost()) { return; }
 
@@ -103,8 +103,8 @@ void CVisuals::DrawOnScreenPing(CBaseEntity* pLocal){
 
 	const int nTextOffset = g_Draw.m_vecFonts[FONT_MENU].nTall;
 	{
-		g_Draw.String(FONT_MENU, x, y, {255, 255, 255, 255 }, ALIGN_DEFAULT, "ping real : %.0f", flLatencyReal);
-		g_Draw.String(FONT_MENU, x, y + h - nTextOffset, {255, 255, 255, 255 }, ALIGN_DEFAULT,	"ping scoreboard : %d", flLatencyScoreBoard);
+		g_Draw.String(FONT_INDICATORS, x, y, { 255, 255, 255, 255 }, ALIGN_DEFAULT, "Real %.0f ms", flLatencyReal);
+		g_Draw.String(FONT_INDICATORS, x, y + h - nTextOffset, { 255, 255, 255, 255 }, ALIGN_DEFAULT, "Scoreboard% d ms", flLatencyScoreBoard);
 	}
 }
 
