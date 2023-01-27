@@ -332,23 +332,34 @@ void CVisuals::DrawDebugInfo(CBaseEntity* pLocal)
 
 		{
 			g_Draw.String(FONT_INDICATORS, xoffset, yoffset += 15, Utils::Rainbow(), ALIGN_DEFAULT, "Fedoraware");
+			//g_Draw.String(FONT_INDICATORS, xoffset, yoffset += 15, Utils::Rainbow(), ALIGN_DEFAULT, "Fedoraware");
 		} 
 		{
 			g_Draw.String(FONT_MENU, xoffset, yoffset += 15, { 119, 255, 225, 255 }, ALIGN_DEFAULT, "Local Player"); // header
+			//g_Draw.String(FONT_MENU, xoffset, yoffset += 15, { 119, 255, 225, 255 }, ALIGN_DEFAULT, "Local Player"); // header
 		}
 		// alive
 		{
 			const bool alive = pLocal->IsAlive();
 			Color_t clr = alive ? Color_t{ 153, 232, 0, 255 } : Color_t{ 167, 0, 0, 255 };
 			g_Draw.String(FONT_MENU, xoffset, yoffset += 15, clr, ALIGN_DEFAULT, "%s", alive ? "ALIVE" : "DEAD");
+			//const bool alive = pLocal->IsAlive();
+			//Color_t clr = alive ? Color_t{ 153, 232, 0, 255 } : Color_t{ 167, 0, 0, 255 };
+			//g_Draw.String(FONT_MENU, xoffset, yoffset += 15, clr, ALIGN_DEFAULT, "%s", alive ? "ALIVE" : "DEAD");
 		}
 
 		if (!G::LastUserCmd){ return; }
 		const float flLastFwd = G::LastUserCmd->forwardmove;
 		const float flLastSde = G::LastUserCmd->sidemove;
+		//if (!G::LastUserCmd){ return; }
+		//const float flLastFwd = G::LastUserCmd->forwardmove;
+		//const float flLastSde = G::LastUserCmd->sidemove;
 		{
 			g_Draw.String(FONT_MENU, xoffset, yoffset += 15, {255, 255, 255, 255}, ALIGN_DEFAULT, "%.0f", flLastFwd);
 			g_Draw.String(FONT_MENU, xoffset, yoffset += 15, {255, 255, 255, 255}, ALIGN_DEFAULT, "%.0f", flLastSde);
+			//g_Draw.String(FONT_MENU, xoffset, yoffset += 15, {255, 255, 255, 255}, ALIGN_DEFAULT, "%.0f", flLastFwd);
+			//g_Draw.String(FONT_MENU, xoffset, yoffset += 15, {255, 255, 255, 255}, ALIGN_DEFAULT, "%.0f", flLastSde);
+			g_Draw.String(FONT_INDICATORS, xoffset -= 7, yoffset += 1057, { 255, 255, 255, 255 }, ALIGN_DEFAULT, "build Jan 6 2023 1:40:10 PM");
 		}
 	}
 }
